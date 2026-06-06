@@ -1,5 +1,5 @@
 ---
-title: "7 - 副作用"
+title: "7. 副作用"
 ---
 
 React における副作用（Side Effect / Effect）とは、**React の管理外で DOM を更新する処理や API との非同期通信等のデータ取得など、UI の構築以外の処理**を指します。
