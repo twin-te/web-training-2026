@@ -18,7 +18,9 @@ title: "4. Astroファイル"
     </style>
 ```
 
-ブラウザで確認すると、`h1`が青色になっていることがわかります。
+ブラウザで確認すると、「Astroからこんにちは」が青色になっていることがわかります。
+
+![見出しが青色にスタイリングされたトップページ](./_images/index-styled.png)
 
 :::tip[演習]
 他にも好きなCSSを追加してページを自由にスタイリングしてみましょう。例えばフォントサイズや背景色、余白（`margin`・`padding`）などを試してみてください。
@@ -43,9 +45,13 @@ title: "4. Astroファイル"
 	<body>
 		<h1>Astroからこんにちは</h1>
     <button id="test">こんにちは</button>
-		<a href="/about">自己紹介</a>
-    <h2>ブログ</h2>
-		<a href="/blog/yadosai">やどかり祭に行ってきた</a>
+		<ul>
+			<li><a href="/about">自己紹介</a></li>
+		</ul>
+		<h2>ブログ</h2>
+		<ul>
+			<li><a href="/blog/yadosai">やどかり祭に行ってきた</a></li>
+		</ul>
     <script>
       const testButton = document.getElementById("test")
       testButton?.addEventListener("click", () => alert("JavaScriptからこんにちは"))
@@ -60,6 +66,8 @@ title: "4. Astroファイル"
 ```
 
 実際にボタンをクリックするとアラートが表示されることがわかります。このように、`script`タグ中に記述したJavaScriptはページを訪れた人のブラウザで実行されます。
+
+![ボタンをクリックするとアラートが表示される様子](./_images/script-alert.png)
 
 しかし、Astroファイル中に記述した`script`タグは通常のHTMLファイルと異なりデフォルトでTypeScriptを使うことができるので、型の恩恵を受けることができます。例えば次のように`number`型に`string`を代入しようとするようなTypeScriptを`script`タグ内に記述するとエディターがエラーを表示します。
 
@@ -93,7 +101,7 @@ const name = "筑波太郎";
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>{name}の自己紹介</title>
+    <title>{name + "の自己紹介"}</title>
   </head>
   <body>
     <h1>{name}の自己紹介ページ</h1>
@@ -104,11 +112,15 @@ const name = "筑波太郎";
 
 ブラウザで`/about`を確認すると、`h1`に「筑波太郎の自己紹介ページ」と表示されているはずです。`name`の値を変えると`title`と`h1`の両方が一度に変わることを確認してみましょう。
 
+:::tip[演習]
+`name`の値を自分の名前に書き換えて、`/about`ページに自分の名前が表示されることを確認してみましょう。
+:::
+
+![フロントマターの変数が反映された自己紹介ページ](./_images/about-frontmatter.png)
+
 ではなぜ、フロントマターと`script`タグの両方にJavaScriptを書くことができるのでしょうか？それは、**実行されるタイミングが異なる**からです。
 
-Astroはサイトを公開する前に、`.astro`ファイルをブラウザが読み込める純粋なHTMLファイルへ変換する**ビルド**という処理を行います。フロントマターに書いたJavaScriptはこのビルド時に実行され、変数の値はHTMLに埋め込まれます。フロントマター自体は最終的なHTMLファイルには含まれません。
-
-なお、[開発中に実行している`npm run dev`（開発サーバー）](/frontend/day3/astro/02-env-setup/#2222-%E9%96%8B%E7%99%BA%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E8%B5%B7%E5%8B%95)はファイルを保存するたびに自動でビルドを行っているため、ブラウザでの変更確認が即座にできるようになっています。
+Astroはサイトを公開する前に、`npm run build` コマンドで`.astro`ファイルをブラウザが読み込める純粋なHTMLファイルへ変換します。これが上の図で示している**ビルド**という処理です。フロントマターに書いたJavaScriptはこのビルド時に実行され、変数の値はHTMLに埋め込まれます。フロントマター自体は最終的なHTMLファイルには含まれません。
 
 ![AstroファイルがビルドされてHTMLファイルに変換される様子。フロントマターの変数がHTMLに埋め込まれている](_images/build-process.png)
 
@@ -125,7 +137,7 @@ const buildTime = new Date().toLocaleString("ja-JP");
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>{name}の自己紹介</title>
+    <title>{name + "の自己紹介"}</title>
   </head>
   <body>
     <h1>{name}の自己紹介ページ</h1>
@@ -138,7 +150,24 @@ const buildTime = new Date().toLocaleString("ja-JP");
 </html>
 ```
 
-ページをリロードしてみると、ページに表示されている「最終更新」の日時は変わらないのに、ブラウザの開発者ツールのコンソールに出力される日時はリロードのたびに変わることがわかります。フロントマターの`buildTime`はビルドした時点で確定し、`script`タグの`new Date()`はページを表示するたびにブラウザで実行されるからです。
+実行タイミングの違いを確かめるために、一度ビルドしてプレビューサーバーで確認してみましょう。`npm run dev` を停止し、次のコマンドを順番に実行してください。[^dev-rerender]
+
+```sh
+npm run build
+npm run preview
+```
+
+`npm run build` が上の図の変換処理を行い、`npm run preview` はそのビルド済みのファイルをそのまま配信するサーバーです。表示されたURLにアクセスして `/about` を開き、ページをリロードしてみてください。ページに表示されている「最終更新」の日時は変わらないのに、ブラウザの開発者ツールのコンソールに出力される日時はリロードのたびに変わることがわかります。フロントマターの `buildTime` はビルドした時点で確定し、`script`タグの `new Date()` はページを表示するたびにブラウザで実行されるからです。
+
+![ビルド後のプレビューでコンソールと表示の日時が異なる様子](./_images/build-preview-devtools.png)
+
+確認できたら `npm run preview` を停止（`q` + `Enter` またはCtrl+C）し、次の章からも引き続き使うために再度 `npm run dev` で開発サーバーを起動しておきましょう。
+
+```sh
+npm run dev
+```
+
+[^dev-rerender]: `npm run dev`（開発サーバー）はファイルを保存するたびに即座に変更を確認できる便利なツールですが、ページへのアクセスのたびに再レンダリングを行うため、フロントマターも毎回実行されます。そのため `buildTime` の値がリロードのたびに変わってしまい、ビルド時に1回だけ実行されるという挙動を確認できません。
 
 `{}`にはJavaScriptの式であれば何でも書くことができます。これを活かして、配列のデータからHTMLの要素を自動生成することもできます。
 
@@ -181,45 +210,20 @@ const tags = ["筑波大学", "学園祭", "やどかり祭"];
 
 この変換結果をAstroが`<ul>`の中に並べて出力します。
 
-## 4.4 スコープドCSS
+![map関数でタグ一覧が描画されたブログページ](./_images/yadosai-tags-map.png)
 
-4.1でAstroの`style`タグを使いましたが、実はAstroの`style`タグには通常のHTMLと大きな違いがあります。それは**スコープ**です。
-
-Astroの`style`タグに書いたCSSは、そのファイル内の要素にしか適用されません。例えば先ほど`src/pages/index.astro`に追加したこのCSSは、
-
-```astro
-    <style>
-      h1 {
-        color: royalblue;
-      }
-    </style>
-```
-
-`/about`ページの`h1`には影響しません。ブラウザで`/about`を確認すると、`h1`が青くなっていないことがわかります。
-
-この仕組みにより、あるページやコンポーネントのCSSが意図せず他のページに影響してしまう問題を防ぐことができます。
-
-逆に、すべてのページに共通して適用したいCSSがある場合は、CSSファイルをフロントマターで`import`することができます。
-
-試しに`src/styles/global.css`を作成してみましょう。
-
-```css
-a {
-  color: royalblue;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-```
-
-このファイルを`src/pages/index.astro`のフロントマターで読み込みます。
+:::caution[フロントマターの変数はscriptタグ内では使えない]
+フロントマターで宣言した変数は、`script`タグの中で直接参照することはできません。
 
 ```astro
 ---
-import "../styles/global.css";
+const message = "こんにちは";
 ---
-```
 
-`/about`や`/blog/yadosai`など他のページも確認してみましょう。`import`したCSSはスコープが限定されず全ページに適用されるため、各ページのリンクがすべて同じスタイルになっていることがわかります。
+<script>
+  // エラー: messageは定義されていない
+  console.log(message);
+</script>
+```
+:::
+
