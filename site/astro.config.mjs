@@ -101,7 +101,7 @@ export default defineConfig({
               ],
             },
             {
-              label: "Day 3 — React",
+              label: "Day 3 — React・Astro",
               items: [
                 { label: "Day 3 概要", slug: "frontend/day3" },
                 {
