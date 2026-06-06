@@ -13,7 +13,7 @@ description: "データベースに接続し読んでみましょう。"
 
 ## データベースのスキーマ定義
 
-`backend/src/db/schema/message.ts` を見てください。
+`backend/src/db/schema.ts` を見てください。
 
 ここではSQLに`messages`テーブルを定義する処理が書いてあります。
 
@@ -60,7 +60,7 @@ CREATE TABLE messages (
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../../db/client.js";
-import { messages } from "../../db/schema/message.js";
+import { messages } from "../../db/schema.js";
 import { MessageRequest } from "../models/message.js";
 
 export const messageRoutes = new Hono();
