@@ -157,6 +157,10 @@ export default defineConfig({
                   label: "Phase 4: データベースに永続化しよう",
                   slug: "backend/2-practice/phase4",
                 },
+                {
+                  label: "Phase 5: もっと改造しよう",
+                  slug: "backend/2-practice/phase5",
+                },
               ],
             },
             {
