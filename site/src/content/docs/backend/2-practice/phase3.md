@@ -146,7 +146,7 @@ $ curl http://localhost:3000/messages
 確認用クライアントからも確認してみましょう。
 
 ```sh
-# backend/ 以下で
+# frontend/ 以下で
 $ npm i
 $ npm run dev
 ```
