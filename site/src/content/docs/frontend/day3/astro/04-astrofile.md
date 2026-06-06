@@ -1,12 +1,12 @@
 ---
-title: "4 - Astroファイルとコンポーネント"
+title: "4. Astroファイル"
 ---
 
-この章ではAstroファイルが普通のHTMLファイルと何が違うのかと、同じ要素を使いまわす「コンポーネント」について解説します。
+この章ではAstroファイルが普通のHTMLファイルと何が違うのかを解説します。
 
 ## 4.1 styleタグを使ったCSSの適用
 
-[`style`タグを使ってCSSを適用する](/frontend/day1/phase3/01-hajimeni#13-css-での使用)ことも、通常のHTMLファイルと同様にできます。
+前章でAstroファイルはHTMLファイルと同じものであると解説しました。そのため[`style`タグを使ってCSSを適用する](/frontend/day1/phase3/01-hajimeni#13-css-での使用)ことも、通常のHTMLファイルと同様にできます。
 
 試しに`src/pages/index.astro`の`</body>`の直前に`style`タグを追加してみましょう。
 
@@ -20,9 +20,13 @@ title: "4 - Astroファイルとコンポーネント"
 
 ブラウザで確認すると、`h1`が青色になっていることがわかります。
 
-## 4.2 Scriptタグの記述とJavaScriptの実行
+:::tip[演習]
+他にも好きなCSSを追加してページを自由にスタイリングしてみましょう。例えばフォントサイズや背景色、余白（`margin`・`padding`）などを試してみてください。
+:::
 
-前章でAstroファイルはHTMLファイルと同じものであると解説しました。そのため[`script`タグを使いJavaScriptを実行する](/frontend/day1/phase3/01-hajimeni#12-html-%E3%81%A7%E3%81%AE%E4%BD%BF%E7%94%A8)ことができます。
+## 4.2 scriptタグの記述とJavaScriptの実行
+
+同様に、[`script`タグを使いJavaScriptを実行する](/frontend/day1/phase3/01-hajimeni#12-html-%E3%81%A7%E3%81%AE%E4%BD%BF%E7%94%A8)こともできます。
 
 試しに`src/pages/index.astro`を次のように書き換えてみましょう。
 
@@ -63,7 +67,7 @@ title: "4 - Astroファイルとコンポーネント"
 let i: number = "こんにちは";
 ```
 
-![エディターが型の不整合を表示している](image.png)
+![エディターが型の不整合を表示している](_images/editor-type-error.png)
 
 ## 4.3 フロントマター
 
@@ -100,7 +104,15 @@ const name = "筑波太郎";
 
 ブラウザで`/about`を確認すると、`h1`に「筑波太郎の自己紹介ページ」と表示されているはずです。`name`の値を変えると`title`と`h1`の両方が一度に変わることを確認してみましょう。
 
-ではなぜ、フロントマターとscriptタグの両方にJavaScriptを書くことができるのでしょうか？それは、実行されるタイミングが異なるからです。フロントマターに書いたJavaScriptはAstroファイルをHTMLファイルに変換するときに実行され、最終的はHTMLファイルには含まれません。一方、scriptタグに書いたJavaScriptは最終的なHTMLファイルに含まれるので実際にページを開いたブラウザ上で実行されます。
+ではなぜ、フロントマターと`script`タグの両方にJavaScriptを書くことができるのでしょうか？それは、**実行されるタイミングが異なる**からです。
+
+Astroはサイトを公開する前に、`.astro`ファイルをブラウザが読み込める純粋なHTMLファイルへ変換する**ビルド**という処理を行います。フロントマターに書いたJavaScriptはこのビルド時に実行され、変数の値はHTMLに埋め込まれます。フロントマター自体は最終的なHTMLファイルには含まれません。
+
+なお、[開発中に実行している`npm run dev`（開発サーバー）](/frontend/day3/astro/02-env-setup/#2222-%E9%96%8B%E7%99%BA%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E8%B5%B7%E5%8B%95)はファイルを保存するたびに自動でビルドを行っているため、ブラウザでの変更確認が即座にできるようになっています。
+
+![AstroファイルがビルドされてHTMLファイルに変換される様子。フロントマターの変数がHTMLに埋め込まれている](_images/build-process.png)
+
+一方、`script`タグに書いたJavaScriptは最終的なHTMLファイルにそのまま含まれるため、実際にページを開いたブラウザ上で実行されます。
 
 実際にフロントマターとscriptタグの実行タイミングの違いを確かめてみましょう。`about.astro`を次のように書き換えてみてください。
 
@@ -130,32 +142,7 @@ const buildTime = new Date().toLocaleString("ja-JP");
 
 `{}`にはJavaScriptの式であれば何でも書くことができます。これを活かして、配列のデータからHTMLの要素を自動生成することもできます。
 
-前の章で作った`src/pages/blog/yadosai.astro`に、記事のタグを`<ul>`・`<li>`で追加してみましょう。
-
-```astro
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>やどかり祭に行ってきた</title>
-  </head>
-  <body>
-    <h1>やどかり祭に行ってきた</h1>
-    <p>投稿日: 2026/5/29</p>
-    <ul>
-      <li>筑波大学</li>
-      <li>学園祭</li>
-      <li>やどかり祭</li>
-    </ul>
-    <h2>概要</h2>
-    <p>やどかり祭の感想などがあれば書いてみましょう</p>
-    <h2>感想</h2>
-    <p>ここにも感想を書いてみましょう</p>
-    <a href="/">トップに戻る</a>
-  </body>
-</html>
-```
-
-タグが増えるたびに`<li>`を追加する必要があります。ここでフロントマターを使ってこれを書き換えてみましょう。
+前の章で作った`src/pages/blog/yadosai.astro`には、タグを`<ul>`・`<li>`で並べていました。タグが増えるたびに`<li>`を追加する必要があります。ここでフロントマターを使ってこれを書き換えてみましょう。
 
 ```astro
 ---
@@ -184,7 +171,7 @@ const tags = ["筑波大学", "学園祭", "やどかり祭"];
 
 表示は変わりませんが、タグの追加・削除が`tags`配列の変更だけで済むようになりました。
 
-`tags.map((tag) => <li>{tag}</li>)` の`map`は、配列の各要素を別の値に変換するメソッドです。`(tag) => <li>{tag}</li>` は「`tag`を受け取り、`<li>{tag}</li>`に変換する」という処理を表しています。
+`tags.map((tag) => <li>{tag}</li>)` の`map`は、[配列](/frontend/day1/phase3/05-hairetsu)の各要素を別の値に変換するメソッドです。`(tag) => <li>{tag}</li>` は[アロー関数](/frontend/day1/phase3/08-kansuu#83-アロー関数)で、「`tag`を受け取り、`<li>{tag}</li>`に変換する」という処理を表しています。
 
 ```
 ["筑波大学", "学園祭", "やどかり祭"]
@@ -194,91 +181,7 @@ const tags = ["筑波大学", "学園祭", "やどかり祭"];
 
 この変換結果をAstroが`<ul>`の中に並べて出力します。
 
-## 4.4 コンポーネント
-
-Webサイトを作るときにはたびたび、同じ要素をいろいろなページで使いまわしたいことがあります。例えば先ほどの例だとトップページ以外のすべてのページに `<a href="/">トップに戻る</a>`と書いていました。
-
-もし、この「トップに戻る」に色をつけたり、「ホームに戻る」に変えたくなったらたくさんのファイルを書き換える必要が出てきます。そこで、複数のファイルが同じ要素を使うことができるための仕組み「コンポーネント」が登場します。
-
-Astroのコンポーネントはページと同様に`.astro`ファイルとして作成します。慣習として`src/components/`ディレクトリに置きます。
-
-試しに`src/components/BackLink.astro`を作成してみましょう。中身は再利用したい部分だけを記述します。
-
-```astro
-<a href="/">トップに戻る</a>
-```
-
-次に、このコンポーネントを`src/pages/about.astro`で使ってみます。別のファイルで定義したものを使いたいときは、フロントマターに`import`文を書いて読み込む必要があります。読み込んだコンポーネントはHTMLタグのように`<BackLink />`と書くことで使えます。
-
-```astro
----
-import BackLink from "../components/BackLink.astro";
-const name = "筑波太郎";
-const buildTime = new Date().toLocaleString("ja-JP");
----
-
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>{name}の自己紹介</title>
-  </head>
-  <body>
-    <h1>{name}の自己紹介ページ</h1>
-    <p>最終更新: {buildTime}</p>
-    <BackLink />
-    <script>
-      console.log("表示日時:", new Date().toLocaleString("ja-JP"));
-    </script>
-  </body>
-</html>
-```
-
-同様に、`src/pages/blog/yadosai.astro`にも`BackLink`コンポーネントを追加してみましょう。
-
-```astro
----
-import BackLink from "../../components/BackLink.astro";
-const tags = ["筑波大学", "学園祭", "やどかり祭"];
----
-
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>やどかり祭に行ってきた</title>
-  </head>
-  <body>
-    <h1>やどかり祭に行ってきた</h1>
-    <p>投稿日: 2026/5/29</p>
-    <ul>
-      {tags.map((tag) => <li>{tag}</li>)}
-    </ul>
-    <h2>概要</h2>
-    <p>やどかり祭の感想などがあれば書いてみましょう</p>
-    <h2>感想</h2>
-    <p>ここにも感想を書いてみましょう</p>
-    <BackLink />
-  </body>
-</html>
-```
-
-ブラウザで`/about`と`/blog/yadosai`の両方を確認すると、どちらにも「トップに戻る」リンクが表示されているはずです。
-
-次に`BackLink.astro`に`style`タグを追加して、リンクに色をつけてみましょう。
-
-```astro
-<a href="/">トップに戻る</a>
-
-<style>
-  a {
-    color: royalblue;
-    font-weight: bold;
-  }
-</style>
-```
-
-ブラウザで`/about`と`/blog/yadosai`を再確認すると、両方のページで「トップに戻る」リンクが青色・太字になっていることがわかります。コンポーネントのファイルを1つ変更するだけで、使っているすべてのページに反映されます。
-
-## 4.5 スコープドCSS
+## 4.4 スコープドCSS
 
 4.1でAstroの`style`タグを使いましたが、実はAstroの`style`タグには通常のHTMLと大きな違いがあります。それは**スコープ**です。
 
