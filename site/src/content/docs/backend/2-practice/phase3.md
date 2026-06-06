@@ -33,6 +33,14 @@ export type NewMessage = typeof messages.$inferInsert;
 
 何やら大変なことが書いてありますが、
 
+ターミナルから
+
+```sh
+$ docker compose exec app npm run db:push
+```
+
+を実行すると、`backend/src/db/schema.ts` が実行され、
+
 ```sql
 CREATE TABLE messages (
   id INT PRIMARY KEY AUTO_INCREMENT,
