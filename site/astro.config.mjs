@@ -72,21 +72,15 @@ export default defineConfig({
           items: [
             { label: 'Day 3 概要', slug: 'frontend/day3' },
             {
-              label: 'Phase 1 — React',
+              label: 'React',
               collapsed: true,
-              items: [
-                { label: 'はじめに', slug: 'frontend/day3/phase1' },
-                { label: '1. はじめに', slug: 'frontend/day3/phase1/01-hajimeni' },
-                { label: '2. 環境構築', slug: 'frontend/day3/phase1/02-kankyo-kouchiku' },
-                { label: '3. 概論', slug: 'frontend/day3/phase1/03-gairon' },
-                { label: '4. TSX 1', slug: 'frontend/day3/phase1/04-tsx1' },
-                { label: '5. 状態', slug: 'frontend/day3/phase1/05-joutai' },
-                { label: '6. TSX 2', slug: 'frontend/day3/phase1/06-tsx2' },
-                { label: '7. 副作用', slug: 'frontend/day3/phase1/07-fukusayou' },
-                { label: '8. CSS', slug: 'frontend/day3/phase1/08-css' },
-                { label: '9. 演習', slug: 'frontend/day3/phase1/09-enshu' },
-              ],
+              autogenerate: { directory: 'frontend/day3/react' },
             },
+            {
+              label: 'Astro',
+              collapsed: true,
+              autogenerate: { directory: 'frontend/day3/astro' },
+            }
           ],
         },
         {

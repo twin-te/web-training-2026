@@ -1,5 +1,5 @@
 ---
-title: "9 - 演習"
+title: "9. 演習"
 ---
 
 本研修の最終的な課題として、[Kdbもどき](https://make-it-tsukuba.github.io/alternative-tsukuba-kdb/)のクローンを作成してください。Kdb もどきは本研修の講師である[いなにわうどん](https://x.com/kyoto_inaniwa)を筆頭に、有志によって開発された筑波大学生向けの授業検索ツールです。
