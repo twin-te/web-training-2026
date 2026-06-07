@@ -16,8 +16,11 @@ description: "環境構築をします。"
 Forkした先のリポジトリを
 
 ```sh
-git clone https://github.com/<あなたのGitHubアカウントのユーザID>/web-training-2026-template
+$ git clone https://github.com/<あなたのGitHubアカウントのユーザID>/web-training-2026-template
 ```
+
+(`$`はシェルの入力部分ですよという意味で書いているので打たなくて大丈夫ですよ。
+今後も同様の表記が出てきたら`$`より後ろをターミナルに打ち込んで、最後に`Enter`で実行してください)
 
 というようにcloneしてローカルに持ってきましょう。
 

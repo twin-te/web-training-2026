@@ -142,6 +142,15 @@ export default defineConfig({
               items: [
                 { label: "2章 概要", slug: "backend/2-practice" },
                 {
+                  label: "Appendix 1: Gitを使おう",
+                  slug: "backend/2-practice/appendix1",
+                },
+                {
+                  label:
+                    "Appendix 2: Web API の様々な検証方法 / 検証用フロントエンド",
+                  slug: "backend/2-practice/appendix2",
+                },
+                {
                   label: "Phase 1: 環境構築しよう",
                   slug: "backend/2-practice/phase1",
                 },
