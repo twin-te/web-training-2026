@@ -174,7 +174,17 @@ export default defineConfig({
             },
             {
               label: "3章: 高度な話題! 発展編",
-              items: [{ label: "3章 概要", slug: "backend/3-improve" }],
+              items: [
+                { label: "3章 概要", slug: "backend/3-improve" },
+                {
+                  label: "Phase 1: 続! HTTP探検隊",
+                  slug: "backend/3-improve/phase1",
+                },
+                {
+                  label: "Phase 2: 認証・認可とその方法",
+                  slug: "backend/3-improve/phase2",
+                },
+              ],
             },
           ],
         },
