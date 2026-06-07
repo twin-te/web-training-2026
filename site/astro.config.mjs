@@ -170,6 +170,10 @@ export default defineConfig({
           ],
         },
         {
+          label: "Git/GitHub",
+          autogenerate: { directory: "git" },
+        },
+        {
           label: "付録",
           items: [{ label: "Windows 環境構築", slug: "windows-setup" }],
         },
