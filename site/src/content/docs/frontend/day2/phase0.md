@@ -139,24 +139,3 @@ $ cat foo.txt  # foo.txt を表示
 ```bash
 $ touch foo.txt  # foo.txt が存在しない場合、新規作成
 ```
-
-### 3.10 ssh
-
-SSH（Secure Shell）プロトコルを用いて、ネットワーク経由にてリモートマシンに接続します。リモートログインやリモートコマンドの実行に使用されます。
-
-`ssh` コマンドを使用して、筑波大学の[全学計算機システム](https://www.u.tsukuba.ac.jp/)に接続する例を以下に示します。接続には公開鍵認証を行う必要がありますが、その手順は本資料では説明しないため、詳しくは <https://www.u.tsukuba.ac.jp/publickey/> を参照してください。
-
-```bash
-$ ssh 学籍番号@icho01.u.tsukuba.ac.jp
-Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.4.0-182-generic x86_64)
-Last login: Fri Nov 3 03:49:20 2023 from 133.51.172.4
-```
-
-`~/.ssh/config` に以下の記述が指定されている場合は、`ssh icho` にて全学計算機システムに接続することもできます。
-
-```text
-Host icho
-  HostName icho01.u.tsukuba.ac.jp
-  User 学籍番号
-  IdentityFile 秘密鍵のパス
-```
