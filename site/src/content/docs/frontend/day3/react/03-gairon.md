@@ -36,7 +36,7 @@ title: "3. 概論"
 <div>
 {
     new Array(10).fill(null).map((_, index) =>
-        <button>{i}</button>
+        <button>{index}</button>
     )
 }
 </div>
