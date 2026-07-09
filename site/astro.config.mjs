@@ -2,18 +2,17 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
 export default defineConfig({
-  site: "https://web-training-2026.jsys.workers.dev",
+  site: "https://web-training-2026.twin-te.workers.dev",
   integrations: [
     starlight({
-      title: "jsys Web 研修 2026",
-      description:
-        "IPC / jsys 合同 Web 研修 2025 — HTML / CSS / JavaScript / TypeScript / React",
+      title: "Twin:te 勉強会 2026",
+      description: "Twin:te 勉強会 2026",
       defaultLocale: "root",
       locales: {
         root: { label: "日本語", lang: "ja" },
       },
       social: {
-        github: "https://github.com/sohosai/web-training-2026",
+        github: "https://github.com/twin-te/web-training-2026",
       },
       customCss: ["./src/styles/custom.css"],
       lastUpdated: true,
