@@ -100,7 +100,7 @@ export default defineConfig({
               ],
             },
             {
-              label: "Day 3 — React・Astro",
+              label: "Day 3 — React・Astro・Vue",
               items: [
                 { label: "Day 3 概要", slug: "frontend/day3" },
                 {
@@ -112,6 +112,11 @@ export default defineConfig({
                   label: "Astro",
                   collapsed: true,
                   autogenerate: { directory: "frontend/day3/astro" },
+                },
+                {
+                  label: "Vue",
+                  collapsed: true,
+                  autogenerate: { directory: "frontend/day3/vue" },
                 },
               ],
             },
