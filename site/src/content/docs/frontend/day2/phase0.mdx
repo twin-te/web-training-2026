@@ -164,3 +164,149 @@ Host icho
   User 学籍番号
   IdentityFile 秘密鍵のパス
 ```
+
+## 4. 演習問題
+
+最後に，実際にシェルを操作する演習問題を用意しました．ターミナルを開き，Finder やエクスプローラ等の GUI を**一切使用せずに**，コマンドのみで作業を進めてください．各問題は前の問題の続きになっています．現在地がわからなくなった場合は，`pwd` と `ls` を実行して状況を確認しましょう．
+
+解答例は各問題の下に折りたたんで記載していますが，まずは自分でコマンドを考えて実行し，結果を確認してから開くようにしてください．なお，解答例はあくまで一例であり，同じ結果になれば他の方法でも構いません．
+
+### Q1. 作業ディレクトリの準備
+
+ホームディレクトリに移動し，そこに `shell-practice` という名前のディレクトリを作成して，その中に移動してください．最後に，カレントディレクトリが `shell-practice` になっていることをコマンドで確認してください．
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ cd ~                 # ホームディレクトリに移動
+$ mkdir shell-practice # ディレクトリを作成
+$ cd shell-practice    # 作成したディレクトリに移動
+$ pwd                  # カレントディレクトリを確認
+/Users/yuto/shell-practice
+```
+</details>
+
+### Q2. ディレクトリ構造の構築
+
+`shell-practice` の中に，以下のディレクトリ構造を作成してください．`memo.txt` 等のファイルは，中身が空のファイルで構いません．作成後，`ls` を用いて各ディレクトリの中身が正しいことを確認してください．
+
+```
+shell-practice
+├── docs
+│   ├── memo.txt
+│   └── report.txt
+└── src
+    └── main.ts
+```
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ mkdir docs src                      # ディレクトリを 2 つ作成
+$ touch docs/memo.txt docs/report.txt # docs 内に空ファイルを作成
+$ touch src/main.ts                   # src 内に空ファイルを作成
+$ ls
+docs src
+$ ls docs
+memo.txt report.txt
+$ ls src
+main.ts
+```
+
+`cd docs` にて docs 内に移動してから `touch memo.txt report.txt` を実行しても構いません．その場合は，作業後に `cd ..` にて `shell-practice` に戻っておきましょう．
+</details>
+
+### Q3. コピーとリネーム
+
+続いて，以下の 2 つの操作を行ってください．作業後，`docs` 内が `idea.txt`，`report.txt`，`report-backup.txt` の 3 ファイルになっていることを確認してください．
+
+1. `docs/report.txt` を，同じ `docs` 内に `report-backup.txt` という名前でコピーする
+2. `docs/memo.txt` を `idea.txt` にリネームする
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ cp docs/report.txt docs/report-backup.txt # コピー
+$ mv docs/memo.txt docs/idea.txt            # リネーム
+$ ls docs
+idea.txt report-backup.txt report.txt
+```
+</details>
+
+### Q4. 相対パスでの移動
+
+`cd src` を実行して，カレントディレクトリを `src` に変更してください．その状態のまま（`cd` で他のディレクトリに移動せずに），`main.ts` を `docs` の中に移動してください．また，カレントディレクトリを `src` から動かさずに，`docs` の中身を表示して結果を確認してください．
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ cd src           # カレントディレクトリを src に変更
+$ mv main.ts ../docs # 親ディレクトリ下の docs に移動
+$ ls ../docs       # 親ディレクトリ下の docs の中身を表示
+idea.txt main.ts report-backup.txt report.txt
+```
+
+`..`（親ディレクトリ）を用いると，カレントディレクトリを基準とした相対パスにて，他のディレクトリ内のファイルを操作できます．
+</details>
+
+### Q5. 隠しファイル
+
+`shell-practice` 直下に戻り，`.config` という名前のファイルを作成してください．そのうえで，このファイルが `ls` では表示されず，オプションを付与した場合にのみ表示されることを確認してください．
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ cd ..          # shell-practice に戻る
+$ touch .config  # 隠しファイルを作成
+$ ls             # .config は表示されない
+docs src
+$ ls -a          # 隠しファイルを含めて表示
+. .. .config docs src
+```
+
+UNIX 系 OS では，`.` から始まる名前のファイルやディレクトリは「隠しファイル」として扱われます．Git の設定ファイル `.gitignore` 等，開発では隠しファイルを扱う機会が頻繁にあります．
+</details>
+
+### Q6. 後片付け
+
+ホームディレクトリに戻り，`shell-practice` ディレクトリを中身ごと削除してください．削除後，`ls` にて `shell-practice` が存在しないことを確認してください．
+
+:::caution
+`rm` にて削除したファイルはゴミ箱には入らず，元に戻すことはできません．実行前に，削除対象が正しいかを必ず確認する習慣をつけましょう．
+:::
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ cd ~                  # ホームディレクトリに移動
+$ rm -r shell-practice  # 中身ごと再帰的に削除
+$ ls                    # shell-practice が消えたことを確認
+```
+
+ディレクトリの削除には `-r` オプションが必要です．オプションを付与せずに `rm shell-practice` を実行すると，エラーが表示されます．
+</details>
+
+### Q7. 【チャレンジ】検索して解く問題
+
+最後に，本資料では紹介していないコマンドやオプションが必要となる問題です．3 章の冒頭にて述べたとおり，コマンドを暗記するよりも，必要な操作を検索にて探し出せる能力の方が重要です．「ディレクトリ 一括作成 コマンド」のように検索して，解き方を自力で見つけてください．
+
+1. `mkdir` を **1 回だけ**実行して，`a/b/c` という 3 階層のディレクトリを一度に作成してください
+2. 適当なテキストファイルを用意し，そのファイルの**行数**をコマンドで数えてください
+
+<details>
+    <summary>解答例</summary>
+
+```
+$ mkdir -p a/b/c   # -p オプションで中間のディレクトリも一括作成
+$ wc -l foo.txt    # ファイルの行数を数える
+      12 foo.txt
+```
+
+このように，未知の操作であっても，検索を通じて適切なコマンドやオプションに辿り着くことができれば十分です．
+</details>
