@@ -15,20 +15,24 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 ## 1. TypeScript
 
-TypeScript（略称，TS）は，Microsoft により 2012 年に発表された，JavaScript のスーパーセットとなるプログラミング言語です．TypeScript では，JavaScript に対して静的型付けの概念や新たな構文を導入することにより，堅牢性や利便性を保証しています．TypeScript は JavaScript にトランスパイル（変換）されて利用されます．したがって我々は TypeScript を用いて，JavaScript と同様に，ブラウザにて作動するアプリケーションを構築したり，[Node.js](https://nodejs.org/) や [Deno](https://deno.com/) 等の実行環境にて作動するサーバを開発したりすることができます．
+TypeScript（略称，TS）は，Microsoft により 2012 年に発表された，JavaScript のスーパーセットとなるプログラミング言語です．TypeScript では，JavaScript に対して静的型付けの概念や新たな構文を導入することにより，堅牢性や利便性を保証しています．TypeScript は JavaScript にトランスパイル（変換）されて利用されます．したがって我々は TypeScript を用いて，JavaScript と同様に，ブラウザにて作動するアプリケーションを構築したり，[Bun](https://bun.sh/) や [Node.js](https://nodejs.org/) 等の実行環境にて作動するサーバを開発したりすることができます．
 
 ## 2. TypeScript を動かしてみる
 
-細かい説明は後に回して，ひとまず使ってみましょう．TypeScript は Node.js 上で作動する `tsc` と呼ばれるコマンドを用いてトランスパイルされます．ここで，トランスパイルとはあるプログラミング言語を別の言語へと変換することを指します．
+細かい説明は後に回して，ひとまず使ってみましょう．TypeScript は `tsc` と呼ばれるコマンドを用いてトランスパイルされます．ここで，トランスパイルとはあるプログラミング言語を別の言語へと変換することを指します．
 
 ### 2.1 環境構築
 
-Node.js をインストールしていない方は，まずそのインストールから始めてください．Node.js のインストールにあたっては，後から複数の Node.js のバージョンを共存させることを想定して，バージョン管理ツールを導入することを強く推奨します．[nvm](https://github.com/nvm-sh/nvm)（Windows 環境の場合は [nvm-windows](https://github.com/coreybutler/nvm-windows)），[fnm](https://github.com/Schniz/fnm) に代表されるバージョン管理ツールは，主要な OS（macOS, Windows, Linux）に対応しているようです．本資料では Node.js およびバージョン管理ツールのインストールの詳細には触れないため，インストールは各自の責任にて行ってください．
-
-Node.js のインストールが完了したら，`typescript` および `tsc` パッケージをグローバルにインストールします．
+本資料では，JavaScript の実行環境として [Bun](https://bun.sh/) を使用します．Bun をインストールしていない方は，まずそのインストールから始めてください．Windows 環境の場合は [Windows向け環境構築ガイド](/windows-setup#bun) を，macOS / Linux 環境の場合はターミナルで次のコマンドを実行してください．
 
 ```
-$ npm install -g typescript tsc
+$ curl -fsSL https://bun.sh/install | bash
+```
+
+Bun のインストールが完了したら，`typescript` パッケージをグローバルにインストールします．
+
+```
+$ bun install -g typescript
 ```
 
 ### 2.2 実行してみる
@@ -45,7 +49,7 @@ console.log(sample);
 
 ```
 $ tsc test.ts
-$ node test.js
+$ bun test.js
 Hello world!
 ```
 
@@ -75,10 +79,10 @@ aaa = 42;
 aaa.replace("4", "");
 ```
 
-これを通常の Node.js で実行すると，ランタイムエラー（実行時エラー）となります．`aaa` は最終的に数値型になっているので，当然のことです．
+これをトランスパイルして通常の JavaScript として実行すると，ランタイムエラー（実行時エラー）となります．`aaa` は最終的に数値型になっているので，当然のことです．
 
 ```
-$ node test.js
+$ bun test.js
 aaa.replace("4", "");
     ^
 TypeError: aaa.replace is not a function

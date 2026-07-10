@@ -198,8 +198,8 @@ $ curl http://localhost:3000/messages
 
 ```sh
 # frontend/ 以下で
-$ npm i
-$ npm run dev
+$ bun i
+$ bun run dev
 ```
 
 ![](./keijiban-no-messages.png)

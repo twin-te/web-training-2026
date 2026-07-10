@@ -8,10 +8,10 @@
 
 ```bash
 cd site
-npm install
-npm run dev      # http://localhost:4321/
-npm run build    # 静的サイトを dist/ に出力
-npm run preview  # ビルド成果物をプレビュー
+bun install
+bun run dev      # http://localhost:4321/
+bun run build    # 静的サイトを dist/ に出力
+bun run preview  # ビルド成果物をプレビュー
 ```
 
 ## 構成

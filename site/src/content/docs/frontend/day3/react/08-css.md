@@ -71,7 +71,7 @@ CSS in JS とは**プログラム中に埋め込まれた CSS によって予め
 styled-components は次のコマンドを実行して導入できます。
 
 ```sh
-npm install styled-components
+bun add styled-components
 ```
 
 ### 8.2.2 コンポーネントの定義
