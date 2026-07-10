@@ -36,9 +36,9 @@ const onClickButton = () => {
 const 状態変数 = ref<状態の型>(初期値);
 ```
 
-上記の例では、状態変数が `count`、状態の型が `number`、そして初期値が `0` に該当しています。初期値はこのコンポーネントが初めてレンダリングされる場合に使用される値です。
+上記の例では、状態変数が `count`、状態の型が `number`、そして初期値が `0` に該当しています。初期値はこのコンポーネントが初めてレンダリングされる場合に使用される値です。なお、`ref<T>()` のように初期値を指定しないこともできます。その場合、状態の型は `T | undefined` となり、初期値は `undefined` になります。
 
-`@click="onClickButton"` は「クリックされたら `onClickButton` 関数を呼ぶ」というディレクティブで、day1 の JavaScript で学んだ `addEventListener("click", ...)` に相当するものです[^v-on]。ボタンをクリックすることで、イベントハンドラである `onClickButton` が呼び出され、その内部の `count.value++` によって状態が更新されています。このように、**状態を書き換えるだけで画面が自動的に更新される**のが Vue の強力な特徴の一つ、リアクティビティです。
+`@click="onClickButton"` は「クリックされたら `onClickButton` 関数を呼ぶ」というディレクティブで、Day 1 の JavaScript で学んだ `addEventListener("click", ...)` に相当するものです[^v-on]。ボタンをクリックすることで、イベントハンドラである `onClickButton` が呼び出され、その内部の `count.value++` によって状態が更新されています。このように、**状態を書き換えるだけで画面が自動的に更新される**のが Vue の強力な特徴の一つ、リアクティビティです。
 
 [^v-on]: `@` は `v-bind:` に対する `:` と同じく、`v-on:` の省略形です。`@input`、`@submit`、`@keydown` など、HTML のイベントは一通り使えます。
 
@@ -197,3 +197,5 @@ const emit = defineEmits<{
         </pre>
     </ul>
 </details>
+
+---
