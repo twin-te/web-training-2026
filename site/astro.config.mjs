@@ -193,6 +193,17 @@ export default defineConfig({
           ],
         },
         {
+          label: "インフラ",
+          items: [
+            { label: "はじめに", slug: "infra" },
+            { label: "1. 自分の PC で動かす", slug: "infra/pc" },
+            { label: "2. サーバを用意する", slug: "infra/server" },
+            { label: "3. サーバで Twin:te を動かす", slug: "infra/deploy" },
+            { label: "発展: 本物の URL で公開する", slug: "infra/publish" },
+            { label: "4. 後片付けの儀式", slug: "infra/cleanup" },
+          ],
+        },
+        {
           label: "Git/GitHub",
           autogenerate: { directory: "git" },
         },
