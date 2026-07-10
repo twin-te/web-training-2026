@@ -14,18 +14,3 @@ description: "Webバックエンドの実装をやってみましょう!"
 | [Phase 5: もっと改造しよう](/backend/2-practice/phase5/)                                      | お好みの機能を追加していき、もっと掲示板らしくしていきましょう。                           |
 | [Appendix 1: Gitを使おう](/backend/2-practice/appendix1/)                                     | Gitを使いましょう                                                                          |
 | [Appendix 2: Web API の様々な検証方法 / 検証用フロントエンド](/backend/2-practice/appendix2/) | Web API を検証する様々な方法の紹介と、「匿名掲示板」の検証用フロントエンドの紹介をします。 |
-
-- 楽しい、楽しい 実践編
-  - 環境構築しよう
-    - コンテナ
-  - リクエストを受けて適当なメッセージを返そう
-    - REST API デバッグツール
-      - httpy
-      - curl
-      - ブラウザの開発者ツール
-      - Swagger UI
-  - データベースを読んでみよう (適当なモックが返る)
-    - データベースデバッグツール
-      - SQL直叩き
-      - table plus
-  - データベースに永続化しよう

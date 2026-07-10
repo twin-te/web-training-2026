@@ -9,132 +9,175 @@ description: "データベースに接続し読んでみましょう。"
 すでにユーザが登録したデータを読んだり、新たにデータを永続化したりしたいですよね。
 そこで、データベースの登場です。
 
-今回は、MySQLというSQLの一種を、DrizzleというTS用のORMを介して操作していこうと思います。
+今回は、PostgreSQLというリレーショナル・データベースを、GORMというGo用のORMを介して操作していこうと思います。
 
 ## データベースのスキーマ定義
 
-`backend/src/db/schema.ts` を見てください。
+`backend/model/message.go` を見てください。
 
-ここではSQLに`messages`テーブルを定義する処理が書いてあります。
+ここにはSQLの`messages`テーブルの定義のもとになるモデルが書いてあります。
 
-```ts
-import { int, mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
+```go
+package model
 
-export const messages = mysqlTable("messages", {
-  id: int("id").primaryKey().autoincrement(),
-  message: varchar("message", { length: 255 }).notNull(),
-  userName: varchar("user_name", { length: 255 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+import "time"
 
-export type Message = typeof messages.$inferSelect;
-export type NewMessage = typeof messages.$inferInsert;
+// Message は掲示板の1件の投稿を表すモデルです。
+// この struct の定義をもとに、GORM が messages テーブルを自動で作ります
+// (db/db.go の AutoMigrate を参照)。
+//
+// `json:"..."` タグは、JSONに変換したときのキー名を指定しています。
+type Message struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Message   string    `gorm:"size:255;not null" json:"message"`
+	UserName  string    `gorm:"size:255;not null" json:"userName"`
+	CreatedAt time.Time `gorm:"not null" json:"createdAt"`
+}
 ```
 
 何やら大変なことが書いてありますが、
+実は、Phase 2で`docker compose up`をしたときに、すでにこの定義からテーブルが自動で作られています。
 
-ターミナルから
+`backend/db/db.go` を見ると、アプリの起動時に呼ばれる処理の中に
 
-```sh
-$ docker compose exec app npm run db:push
+```go
+	// model.Message の定義に合わせて messages テーブルを自動で作成・更新する
+	if err := d.AutoMigrate(&model.Message{}); err != nil {
+		return fmt.Errorf("failed to migrate database: %w", err)
+	}
 ```
 
-を実行すると、`backend/src/db/schema.ts` が実行され、
+とあります。
+この`AutoMigrate`が実行されると、
 
 ```sql
 CREATE TABLE messages (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+  id BIGSERIAL PRIMARY KEY,
   message VARCHAR(255) NOT NULL,
   user_name VARCHAR(255) NOT NULL,
-  created_at TIEMSTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL
 );
 ```
 
-のようなSQL文が発行され、
+のようなSQL文が発行され[^automigrate]、
 
-| id (整数, 行追加時には自動でカウントアップされる) | message (255文字以下の文字列, 空っぽは駄目) | user_name (255文字以下の文字列, 空っぽは駄目) | created_at (時刻, 空っぽは駄目, デフォルトは現在の時刻) |
-| ------------------------------------------------- | ------------------------------------------- | --------------------------------------------- | ------------------------------------------------------- |
-| 1                                                 | "こんにちは!\nいまなにしてる?"              | "風吹けば名無し"                              | 2026-06-06T13:00+09:00                                  |
+| id (整数, 行追加時には自動でカウントアップされる) | message (255文字以下の文字列, 空っぽは駄目) | user_name (255文字以下の文字列, 空っぽは駄目) | created_at (時刻, 空っぽは駄目) |
+| ------------------------------------------------- | ------------------------------------------- | --------------------------------------------- | ------------------------------- |
+| 1                                                 | "こんにちは!\nいまなにしてる?"              | "風吹けば名無し"                              | 2026-06-06T13:00+09:00          |
 
 のようなテーブルがデータベースに作られます。
 なお、この段階では何のデータ(レコード, 行)も格納されていません。
 (上の表の1行目のレコードは、こうなる予定というイメージです。)
 
+本当にテーブルができているのか、覗いてみましょう。
+docker composeには[Adminer](https://www.adminer.org/)という「ブラウザからデータベースの中身を覗けるツール」も入れてあります。
+[http://localhost:8080](http://localhost:8080) を開いて、
+
+- System: `PostgreSQL`
+- Server: `db`
+- Username: `app`
+- Password: `app`
+- Database: `app`
+
+でログインしてみてください。
+たしかに`messages`テーブルができている(そして中身は空っぽな)のが確認できるはずです。
+
 ## messageのハンドラ内でデータベースを操作しよう
 
-`backend/src/api/routes/message.ts` を見てください。
+`backend/api/message.go` を見てください。
 
-```ts
-import { eq } from "drizzle-orm";
-import { Hono } from "hono";
-import { db } from "../../db/client.js";
-import { messages } from "../../db/schema.js";
-import { MessageRequest } from "../models/message.js";
+```go
+package api
 
-export const messageRoutes = new Hono();
+// /messages エンドポイントのハンドラをこのファイルに実装していきます。
 
 // ここに追記
 ```
 
 ここに、以下のように追記してください。
+(Goでは`import`はファイルごとに書くので、このファイルにも必要です。)
 
-```ts
-messageRoutes.get("/", async (c) => {
-  const rows = await db.select().from(messages);
-  return c.json(rows);
-});
+```go
+// ここに追記
+import (
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+
+	"github.com/twin-te/web-training-2026-template/backend/db"
+	"github.com/twin-te/web-training-2026-template/backend/model"
+)
+
+// GetMessages は `/messages` への `GET` リクエストのハンドラです。
+func GetMessages(c echo.Context) error {
+	messages := []model.Message{}
+	if err := db.DB.Find(&messages).Error; err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, messages)
+}
 ```
 
-`messageRoutes.get("/", async (c) => { ... });`
-という記法は先ほど見たのと同様で、
-`/`への`GET`リクエストが来たらこの関数でハンドリングする、というのを登録します。
+`GetMessages`は、Phase 2で`/health`のために書いたのと同じ形のハンドラ関数です。
+今度は使い回せるように名前を付けて定義しました。
 
-なお、`messageRoutes`を次に `index.ts` で`/messages`のルートとして登録してください。
-これで、全体としては、`/messages`への`GET`リクエストのハンドラ関数を登録してることになります。
+なお、この`GetMessages`を、次に `main.go` で`/messages`への`GET`リクエストのハンドラとして登録してください。
 
-```ts
-// 省略
+```go
+	/* ここに追記 */
+	e.GET("/health", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, healthResponse{
+			Status:  "ok",
+			Message: "Hello, World!",
+		})
+	})
 
-// 追記する
-import { messageRoutes } from "./api/routes/message.js";
-
-const app = new Hono();
-
-app.use("*", logger());
-app.use("*", cors());
-
-/* ここに追記 */
-app.get("/health", (c) => c.json({ status: "ok", message: "Hello, World!" }));
-
-// 追記する
-app.route("/messages", messageRoutes);
-
-// 省略
+	// 追記する
+	e.GET("/messages", api.GetMessages)
 ```
 
-もう一度、今 `backend/src/api/routes/message.ts` に追加したコードを見てみましょう。
+`main.go`の`import`にも`api`パッケージの追記が必要ですね。
 
-```ts
-messageRoutes.get("/", async (c) => {
-  const rows = await db.select().from(messages);
-  return c.json(rows);
-});
+```go
+import (
+	"net/http"
+	"os"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
+	"github.com/twin-te/web-training-2026-template/backend/api"
+	"github.com/twin-te/web-training-2026-template/backend/db"
+)
 ```
 
-この `db.select().from(messages)` を実行すると、
+もう一度、今 `backend/api/message.go` に追加したコードを見てみましょう。
+
+```go
+func GetMessages(c echo.Context) error {
+	messages := []model.Message{}
+	if err := db.DB.Find(&messages).Error; err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, messages)
+}
+```
+
+この `db.DB.Find(&messages)` を実行すると、
 
 ```sql
 SELECT * FROM messages;
 ```
 
 のようなSQL文が発行されます。
-`messages`テーブル(先ほど定義したテーブルですね)から何でもかんでも(`*`)を取り出すということです。
+`messages`テーブル(先ほど定義を見たテーブルですね)から何でもかんでも(`*`)を取り出すということです。
 
-そうすると取得できたいくつもの行(`rows`)をこれまでと同様`c.json()`でレスポンスを返します。
+そうすると取得できたいくつもの行が`messages`(`model.Message`のスライス[^slice])に詰め込まれるので、これまでと同様`c.JSON()`でレスポンスを返します[^nilslice]。
 
 ## 動作を検証しよう
 
 今回もまた、curlを使って検証をしていきましょう。
+(docker composeを立ち上げっぱなしにしていれば、コードはairが自動でビルドし直してくれていますよ。)
 
 以下のように`/messages`を見に行くと...
 
@@ -165,10 +208,18 @@ $ npm run dev
 
 と表示されています。
 
-そういえば先程作った`messages`テーブルには何のレコードも格納されていませんでしたね。
+そういえば先程見た`messages`テーブルには何のレコードも格納されていませんでしたね。
 
 `[]`はJSONの空の配列を表し、つまり、メッセージが0件取得されたということです。
 正しく動いていたのですね!
 
 そうなると、今度はメッセージをデータベースに格納していきたいですね。
 さあ、次のフェーズに行きましょう。
+
+---
+
+[^automigrate]: 正確には、GORMは既存のテーブルと見比べて足りないテーブルや列だけを作ってくれます。開発中はモデルをいじって再起動するだけでテーブルが追いついてくるので楽ちんです。本物のサービスの運用では、データベースの変更をもっと慎重に管理するためにマイグレーションファイルを使うことが多いです。
+
+[^slice]: スライスというのはGoの可変長の配列(のようなもの)です。
+
+[^nilslice]: 細かい話ですが、`messages := []model.Message{}`と「空のスライス」で初期化しているのがミソです。`var messages []model.Message`と宣言だけした場合、中身が空だとJSONでは`[]`ではなく`null`になってしまいます。
