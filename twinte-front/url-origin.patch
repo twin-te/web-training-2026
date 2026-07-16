@@ -1,0 +1,13 @@
+diff --git a/front/src/ui/url.ts b/front/src/ui/url.ts
+index 8ae8b24..9064f17 100644
+--- a/front/src/ui/url.ts
++++ b/front/src/ui/url.ts
+@@ -13,7 +13,7 @@ export const redirectToUrl = (url: string) => {
+   location.href = url;
+ };
+ 
+-export const appUrl = import.meta.env.VITE_APP_URL as string;
++export const appUrl = (import.meta.env.VITE_APP_URL as string) || location.origin;
+ 
+ export const getLoginUrl = (provider: Provider, redirectUrl = appUrl) => {
+   return `${appUrl}/auth/v4/${provider}?redirect_url=${redirectUrl}`;

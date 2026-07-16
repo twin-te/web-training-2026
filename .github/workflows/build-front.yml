@@ -1,0 +1,54 @@
+name: build-front
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - front-image/**
+      - .github/workflows/build-front.yml
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}/twinte-front
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout twin-te/twin-te
+        uses: actions/checkout@v4
+        with:
+          repository: twin-te/twin-te
+          ref: master
+          path: twin-te
+
+      - name: Apply course patch and env
+        run: |
+          git -C twin-te apply --verbose "$GITHUB_WORKSPACE/twinte-front/url-origin.patch"
+          cp twinte-front/.env.course twin-te/front/.env.course
+
+      - name: Resolve twin-te SHA
+        id: twinte-sha
+        run: echo "sha=$(git -C twin-te rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          docker build \
+            -f twinte-front/Dockerfile \
+            -t "$IMAGE:latest" \
+            -t "$IMAGE:${{ steps.twinte-sha.outputs.sha }}" \
+            twin-te/front
+          docker push --all-tags "$IMAGE"
