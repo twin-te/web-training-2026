@@ -195,12 +195,12 @@ export default defineConfig({
         {
           label: "インフラ",
           items: [
-            { label: "はじめに", slug: "infra" },
-            { label: "1. 自分の PC で動かす", slug: "infra/pc" },
-            { label: "2. サーバを用意する", slug: "infra/server" },
-            { label: "3. サーバで Twin:te を動かす", slug: "infra/deploy" },
-            { label: "発展: 本物の URL で公開する", slug: "infra/publish" },
-            { label: "4. 後片付けの儀式", slug: "infra/cleanup" },
+            { label: "1. はじめに", slug: "infra" },
+            { label: "2. 自分の PC で動かす", slug: "infra/2-pc" },
+            { label: "3. サーバを用意する", slug: "infra/3-server" },
+            { label: "4. サーバで Twin:te を動かす", slug: "infra/4-deploy" },
+            { label: "5. インターネットに公開する", slug: "infra/5-publish" },
+            { label: "6. 後片付け", slug: "infra/6-cleanup" },
           ],
         },
         {
